@@ -130,3 +130,18 @@ val paramGrid: Array[ParamMap] = new ParamGridBuilder()
 ~~~
 
 The Python API should follow Scala's.
+
+##Note
+
+An algorithm may be used more than once in a pipeline and we need to distinguish their parameters.
+
+~~~
+val norm1 = new Normalizer()
+val norm2 = new Normalizer()
+
+val paramMap = new ParamMap()
+  .put(norm1.params.norm, "l1")
+  .put(norm2.params.norm, "l2")
+~~~
+
+The proposed solution is to attach each normalizer a name, a random name like "normalizer-#####" is used by default.
