@@ -1,4 +1,4 @@
-Parameters
+Parameter
 ===
 
 We want to separate parameters from algorithms for easy configuration of a machine learning pipeline. sk-learn's solution is string-based (copied from http://scikit-learn.org/stable/auto_examples/grid_search_text_feature_extraction.html):
