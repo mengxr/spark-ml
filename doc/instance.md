@@ -70,3 +70,8 @@ class LabeledIndexer[L](labelToIndex: Map[L, Int]) {
   }
 }
 ~~~
+
+##TODO
+
+1. Add a meta field to Instance? Meta contains data that not related to training and prediction.
+2. Is this type general enough to handel columnar storage?
