@@ -9,7 +9,7 @@ An instance is an observation/example used in training and prediction. In MLlib,
 2. The vector is fixed to `Vector`. We should allow data of other types.
 3. Weight is not addressed.
 
-Another issue is with transformers. For example, `LabelIndexer` can map labels of arbitrary type to integers in range `[0, numClasses]`. As a transformer, the only thing a `LabedIndexer` should know is how to convert the label and carry over other data in the instance, but not what other part of the data looks like.
+Another issue is with transformers. For example, `LabelIndexer` can map labels of arbitrary type to integers in range `[0, numClasses)`. As a transformer, the only thing a `LabedIndexer` should know is how to convert the label and carry over other data in the instance, but not what other part of the data looks like.
 
 ##Proposal
 
