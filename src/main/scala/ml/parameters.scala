@@ -22,6 +22,14 @@ class Param[+T](
   override def toString: String = s"$name: $doc (default: $defaultValue)"
 }
 
+trait Params {
+  def params: ParamSet
+}
+
+trait ModelParams {
+  def modelParams: ParamSet
+}
+
 abstract class ParamSet {
   override def toString: String = {
     val methods = this.getClass.getMethods
@@ -32,6 +40,10 @@ abstract class ParamSet {
       }.map(m => m.invoke(this).toString)
       .mkString("{", "," ,"}")
   }
+}
+
+object ParamSet {
+  def empty: ParamSet = new ParamSet {}
 }
 
 /**

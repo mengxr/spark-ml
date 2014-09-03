@@ -1,22 +1,22 @@
 package ml.example
 
-import ml.{Identifiable, Estimator, Param}
+import ml._
 
-class PCA(override val id: String) extends Estimator {
+class PCA(override val id: String) extends Estimator with Params {
 
   def this() = this("pca-" + Identifiable.randomId())
 
-  override lazy val params: PCA.ParamSet = new PCA.ParamSet(id)
+  override val params: PCA.ParamSet = new PCA.ParamSet(id)
 
-//  def fit[T](dataset: Dataset[_], paramSet: ParamMap): PCA.Model = {
-//    val k = paramSet.get(this.params.k)
-//    // do some computation
-//    null
-//  }
+  override def fit(dataset: Dataset, paramMap: ParamMap): Transformer = null
 }
 
 object PCA {
   class ParamSet(parent: String) extends ml.ParamSet {
     lazy val k = new Param[Int](parent, "k", "number of components", 10)
+  }
+
+  class Model(override val id: String) extends Transformer {
+    override def transform(dataset: Dataset, paramMap: ParamMap): Dataset = null
   }
 }
