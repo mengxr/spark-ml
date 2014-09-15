@@ -10,5 +10,5 @@ trait Identifiable {
 }
 
 object Identifiable {
-  def randomId(): String = UUID.randomUUID().toString
+  private[ml] def randomId(): String = UUID.randomUUID().toString.take(8)
 }

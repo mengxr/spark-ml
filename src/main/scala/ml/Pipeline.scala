@@ -51,7 +51,7 @@ class Pipeline(override val id: String) extends Estimator {
     new Pipeline.Model(transformers.toArray)
   }
 
-  override val params: ParamSet = ParamSet.empty
+  override def params: Array[Param[_]] = Array.empty
 }
 
 object Pipeline {

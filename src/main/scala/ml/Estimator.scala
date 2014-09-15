@@ -1,6 +1,6 @@
 package ml
 
-trait Estimator extends Identifiable {
+abstract class Estimator extends Identifiable with Params {
 
   def fit(dataset: Dataset, paramMap: ParamMap): Transformer
 
@@ -8,5 +8,8 @@ trait Estimator extends Identifiable {
     paramMaps.map(fit(dataset, _))
   }
 
-  val params: ParamSet
+  /**
+   * Parameter for the output model.
+   */
+  def model: Params = Params.empty
 }

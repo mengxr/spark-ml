@@ -1,6 +1,6 @@
 package ml
 
-trait Transformer extends Identifiable {
+abstract class Transformer extends Identifiable with Params {
 
   def transform(dataset: Dataset, paramMap: ParamMap): Dataset
 

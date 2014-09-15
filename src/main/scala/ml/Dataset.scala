@@ -1,7 +1,4 @@
 package ml
 
-abstract class Dataset {
-  val info: DatasetInfo
-}
-
-trait DatasetInfo
+/** Extension of SchemaRDD */
+abstract class Dataset
