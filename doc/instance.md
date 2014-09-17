@@ -1,4 +1,4 @@
-Instance
+Instance (obsoleted)
 ===
 
 ##Motivation
