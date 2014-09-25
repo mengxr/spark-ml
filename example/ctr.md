@@ -70,7 +70,9 @@ model = pipeline.fit(dataset, pipelineParamMap)
 
 # inspect the model
 model.transform(dataset).registerTempTable("prediction")
-fn = sqlContext.sql("SELECT impressionId, userId, adId, ctr WHERE label is TRUE and ctr < 0.01")
+fn = sqlContext.sql("""
+  SELECT impressionId, userId, adId, ctr FROM prediction
+  WHERE label is TRUE and ctr < 0.01""")
 fn.collect()
 
 # serialize the model
