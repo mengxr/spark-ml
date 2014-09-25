@@ -1,9 +1,7 @@
-Machine Learning Use Cases
+Example: CTR prediction
 ===
 
-##Ad CTR prediction
-
-###Datasets
+##Datasets
 
 * **impression event**: impressionId, impressionTime, userId, adId, browser, ip
 * **click event**: clickId, impressionId, clickTime
@@ -12,7 +10,7 @@ Machine Learning Use Cases
 
 The user/ad records are stored both offline (HDFS) for training and online (K/V) for prediction.
 
-####Offline training
+##Offline training
 
 ```python
 sqlContext.parquetFile("/impression/2014/05").registerTempTable("impression")
@@ -27,25 +25,26 @@ dataset = sqlContext.sql("""
     JOIN user ON impression.userId = user.userId
     JOIN ad ON impression.adId = ad.adId;""")
 
-stratifiedSampler = StratifiedSampler()
-timeTransformer = TimeTransformer()
-indexer = Indexer()
-ipLocator = IpLocator()
-interactor = Interactor()
+stratifiedSampler = StratifiedSampler() # downsample negatives
+timeTransformer = TimeTransformer() # compute hour of day
+indexer = Indexer() # map categorical values into indices
+ipLocator = IpLocator() # map ip to location names
+interactor = FeatureInteractor() # compute interaction of features
 oneHotEncoder = OneHotEncoder()
-fvAssembler = FeatureVectorAssembler()
-cv = CrossValidator()
+fvAssembler = FeatureVectorAssembler() # group features
+cv = CrossValidator() # cross-validation
 evaluator = BinaryClassificationEvaluator()
 lr = LogisticRegression()
-ir = IsotonicRegresion()
+ir = IsotonicRegresion() # score calibration
+pipeline = Pipeline() # simple pipeline object
 
-lrParamMaps = ParamGridBuilder()
+lrParamMapsInCV = ParamGridBuilder() # parameter grid for CV
   .addMulti(lr.maxIter, [50, 100])
   .addMulti(lr.lambda, [0.1, 0.01])
   .add(lr.regType, "l2")
   .build()
 
-pipelineParamMap = {
+paramMap = { # global parameters
   stratifiedSampler.stratum: ["label"],
   stratifiedSampler.fractions: {True: 1.0, False: 0.01, None: 1.0},
   stratifiedSampler.seed: 11,
@@ -60,26 +59,21 @@ pipelineParamMap = {
   cv.nFold: 3,
   cv.estimator: lr,
   cv.evaluator: evaluator,
-  cv.evaluatorParamMaps: lrParamMaps,
+  cv.evaluatorParamMaps: lrParamMapsInCV,
   cv.evaluatorParamMaps: {evaluator.metric: "areaUderROC"},
-  ir.output: {"ctr": "prediction"}}
-  
-pipeline = Pipeline.create(
-  stratifiedSampler,
-  timeTransformer,
-  indexer,
-  ipLocator,
-  interactor,
-  oneHotEncoder,
-  fvAssembler,
-  cv,
-  ir)
+  ir.output: {"ctr": "prediction"},
+  pipeline.steps: [stratifiedSampler, timeTransformer, indexer, ipLocator, interactor, oneHotEncoder, fvAssembler, cv, ir],
+  pipeline.ignoreInTransformation: [stratifiedSampler]}
 
 model = pipeline.fit(dataset, pipelineParamMap)
 model.saveAsJsonFile("/model")
 ```
 
-####Online prediction
+0. The entry point of an offline training pipeline is after joining training events with raw features.
+1. `stratifiedSampler` is only used in training.
+2. It is easy to remove `ipLocator` or `timeTransformer` from the pipeline: update `pipeline.steps` and then modify `fvAssembler.output`.
+
+##Online prediction
 
 In online prediction, we don't have click info.
 

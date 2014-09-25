@@ -25,6 +25,8 @@ class Param[+T](
  * Trait for components with parameters.
  */
 trait Params {
+
+  /** Returns all parameters. */
   def params: Array[Param[_]] = {
     val methods = this.getClass.getMethods
     methods.filter { m =>
@@ -33,6 +35,9 @@ trait Params {
         m.getParameterTypes.isEmpty
     }.map(m => m.invoke(this).asInstanceOf[Param[_]])
   }
+
+  /** Validate parameters specified by the input parameter map. */
+  def validateParams(paramMap: ParamMap): Unit = {}
 }
 
 object Params {
