@@ -41,7 +41,7 @@ pipeline = Pipeline() # simple pipeline object
 
 lrParamMapsInCV = ParamGridBuilder() # parameter grid for CV
   .addMulti(lr.maxIter, [50, 100])
-  .addMulti(lr.lambda, [0.1, 0.01])
+  .addMulti(lr.regParam, [0.1, 0.01])
   .add(lr.regType, "l2")
   .build()
 
