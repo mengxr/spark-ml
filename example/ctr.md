@@ -19,7 +19,8 @@ sqlContext.parquetFile("/user").registerTempTable("user")
 sqlContext.parquetFile("/ad").registerTempTable("ad")
 
 dataset = sqlContext.sql("""
-  SELECT impressionTime, browser, ip, userFeatures, adFeatures, clickTime IS NOT NULL AS label
+  SELECT impressionId, impression.userId, impression.adId, click.clickId,
+    impressionTime, browser, ip, userFeatures, adFeatures, clickTime IS NOT NULL AS label
   FROM impression
     LEFT OUTER JOIN click ON impresssion.impressionId = click.impressionId
     JOIN user ON impression.userId = user.userId
@@ -66,12 +67,20 @@ paramMap = { # global parameters
   pipeline.ignoreInTransformation: [stratifiedSampler]}
 
 model = pipeline.fit(dataset, pipelineParamMap)
+
+# inspect the model
+model.transform(dataset).registerTempTable("prediction")
+fn = sqlContext.sql("SELECT impressionId, userId, adId, ctr WHERE label is TRUE and ctr < 0.01")
+fn.collect()
+
+# serialize the model
 model.saveAsJsonFile("/model")
 ```
 
-0. The entry point of an offline training pipeline is after joining training events with raw features.
+1. The entry point of an offline training pipeline is after joining training events with raw features.
+1. The input data contains columns not used in training, but useful for model inspection.
 1. `stratifiedSampler` is only used in training.
-2. It is easy to remove `ipLocator` or `timeTransformer` from the pipeline: update `pipeline.steps` and then modify `fvAssembler.output`.
+1. It is easy to remove `ipLocator` or `timeTransformer` from the pipeline: update `pipeline.steps` and then modify `fvAssembler.output`.
 
 ##Online prediction
 
