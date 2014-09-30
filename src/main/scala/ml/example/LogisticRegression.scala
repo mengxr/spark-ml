@@ -16,6 +16,8 @@ class LogisticRegression(override val id: String) extends Estimator {
   val regParam: Param[Double] = new Param(this, "regParam", "regularization constant", Some(0.1))
 
   override def fit(dataset: Dataset, paramMap: ParamMap): LogisticRegression.Model = {
+    val sqlContext = dataset.sqlContext
+    import sqlContext._
     val instances = dataset.select('label, 'features).map { case Row(label: Double, features: Vector) =>
       LabeledPoint(label, features)
     }.cache()
