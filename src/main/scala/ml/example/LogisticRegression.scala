@@ -2,12 +2,15 @@ package ml.example
 
 import ml._
 
+import org.apache.spark.mllib.classification.LogisticRegressionWithLBFGS
+
 class LogisticRegression(override val id: String) extends Estimator {
 
   def this() = this("lr-" + Identifiable.randomId())
 
   override def fit(dataset: Dataset, paramMap: ParamMap): LogisticRegression.Model = {
     new LogisticRegression.Model(id)
+    dataset.
   }
 
   val maxIter: Param[Int] = new Param(this, "maxIter", "max number of iterations", Some(100))
