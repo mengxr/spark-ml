@@ -2,27 +2,21 @@ package ml
 
 import scala.collection.mutable.ListBuffer
 
-class Pipeline(override val id: String) extends Estimator {
+trait PipelineStage extends Identifiable
 
-  val components = ListBuffer.empty[Any]
+class Pipeline(override val id: String) extends Estimator {
 
   def this() = this("Pipeline-" + Identifiable.randomId())
 
-  def append(estimator: Estimator): this.type = {
-    components += estimator
-    this
-  }
-
-  def append(transformer: Transformer): this.type = {
-    components += transformer
-    this
-  }
+  val stages: Param[Array[PipelineStage]] =
+    new Param[Array[PipelineStage]](this, "stages", "stages of the pipeline", None)
 
   override def fit(dataset: Dataset, paramMap: ParamMap): Transformer = {
+    val theStages = paramMap.getOrDefault(stages)
     // Search for last estimator.
     var lastIndexOfEstimator = -1
-    components.view.zipWithIndex.foreach { case (component, index) =>
-      component match {
+    theStages.view.zipWithIndex.foreach { case (stage, index) =>
+      stage match {
         case _: Estimator =>
           lastIndexOfEstimator = index
         case _ =>
@@ -30,8 +24,8 @@ class Pipeline(override val id: String) extends Estimator {
     }
     var curDataset = dataset
     val transformers = ListBuffer.empty[Transformer]
-    components.view.zipWithIndex.foreach { case (component, index) =>
-      component match {
+    theStages.view.zipWithIndex.foreach { case (stage, index) =>
+      stage match {
         case estimator: Estimator =>
           val transformer = estimator.fit(dataset, paramMap)
           if (index < lastIndexOfEstimator) {
