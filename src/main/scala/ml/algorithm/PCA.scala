@@ -1,6 +1,9 @@
-package ml.example
+package ml.algorithm
 
 import ml._
+import ml.dataset.Dataset
+import ml.estimator.Estimator
+import ml.transformer.Transformer
 
 class PCA(override val id: String) extends Estimator {
 

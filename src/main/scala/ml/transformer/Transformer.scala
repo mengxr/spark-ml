@@ -1,4 +1,7 @@
-package ml
+package ml.transformer
+
+import ml.dataset.Dataset
+import ml.{Identifiable, ParamMap, Params}
 
 abstract class Transformer extends Identifiable with Params {
 

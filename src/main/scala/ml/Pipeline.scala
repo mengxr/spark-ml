@@ -1,5 +1,9 @@
 package ml
 
+import ml.dataset.Dataset
+import ml.estimator.Estimator
+import ml.transformer.Transformer
+
 import scala.collection.mutable.ListBuffer
 
 class Pipeline(override val id: String) extends Estimator {

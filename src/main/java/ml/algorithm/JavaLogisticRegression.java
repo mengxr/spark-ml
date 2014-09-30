@@ -1,6 +1,9 @@
-package ml.example;
+package ml.algorithm;
 
 import ml.*;
+import ml.dataset.Dataset;
+import ml.estimator.Estimator;
+import ml.transformer.Transformer;
 import scala.Some;
 
 public class JavaLogisticRegression extends Estimator {
