@@ -57,18 +57,18 @@ paramMap = { # global parameters
   oneHotEncoder.deactiveInputFeatures: true,
   interactor.output: {"genderMatch": ["userFeatures$gender", "adFeatures$targetGender"]},
   fvAssembler.output: {"features":
-    ["userFeatures", "adFeatures", "impressionHour", "countries", "browsers"]}
+    ["userFeatures", "adFeatures", "impressionHour", "countries", "browsers", "genderMatch"]}
   cv.nFold: 3,
   cv.estimator: lr,
   cv.evaluator: evaluator,
-  cv.evaluatorParamMaps: lrParamMapsInCV,
+  cv.estimatorParamMaps: lrParamMapsInCV,
   cv.evaluatorParamMaps: {evaluator.metric: "areaUderROC"},
   ir.output: {"ctr": "prediction"},
   pipeline.steps: [stratifiedSampler, timeTransformer, indexer, ipLocator, interactor, 
     oneHotEncoder, fvAssembler, cv, ir],
   pipeline.ignoreInTransformation: [stratifiedSampler]}
 
-model = pipeline.fit(dataset, pipelineParamMap)
+model = pipeline.fit(dataset, paramMap)
 
 # inspect the model
 model.transform(dataset).registerTempTable("prediction")
