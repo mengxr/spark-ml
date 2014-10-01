@@ -1,6 +1,5 @@
 package ml.evaluation
 
-import ml._
 import ml.dataset.Dataset
 import ml.transformer.Transformer
 

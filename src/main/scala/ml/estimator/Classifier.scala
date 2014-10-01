@@ -7,7 +7,7 @@ import org.apache.spark.mllib.linalg.Vector
 import ml._
 import ml.evaluation._
 
-abstract class Classifier[Model] extends Estimator[Model] {
+abstract class Classifier[Model <: Transformer] extends Estimator[Model] {
 
 }
 

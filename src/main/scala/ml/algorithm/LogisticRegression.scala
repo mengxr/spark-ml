@@ -16,10 +16,6 @@ class LogisticRegression(override val id: String) extends Classifier[LogisticReg
   def this() = this("LR-" + Identifiable.randomId())
 
   // From Classifier
-  /**
-   * This initializes this estimator with the given dataset and runs learning until completion.
-   * If this estimator has been initialized with another Dataset and model, that Dataset and model are discarded.
-   */
   override def fit(dataset: Dataset, paramMap: ParamMap): LogisticRegression.Model = {
     val rdd: RDD[LabeledPoint] = DataExtractor.extractLabeledPointRDD(dataset)
     val lrParams: LogisticRegressionParams = ??? // extract from paramMap
@@ -32,26 +28,15 @@ class LogisticRegression(override val id: String) extends Classifier[LogisticReg
     new LogisticRegression.Model(id)
 
   // From IterativeEstimator
-  /**
-   * This re-initializes learning with a new dataset (and model).
-   */
-  override def initWith(dataset: Dataset, paramMap: ParamMap): Unit = {
-    _optAlg = paramMap.getOrDefault(optimizer)
+  override private[ml] def createSolver(dataset: Dataset, paramMap: ParamMap): LogisticRegression.Solver = {
+    new LogisticRegression.Solver(paramMap.getOrDefault(optimizer))
     // also init parameter vector, etc.
   }
-
-  override def step(): Boolean = _optAlg.step()
-
-  override def currentModel(): LogisticRegression.Model = ???
-
-  override def numIterations(): Int = ???
 
   // Parameters
   val regularization: Param[Double] = new Param(this, "regularization", "regularization constant", Some(0.1))
 
   val optimizer: Param[Optimizer] = new Param(this, "optimizer", "optimization algorithm", Some(new GradientDescent()))
-
-  var _optAlg: Optimizer = null
 
 }
 
@@ -72,5 +57,16 @@ object LogisticRegression {
   }
 
   def defaultEvaluator: EvaluationMetric = LogLoss
+
+  // TODO: Should IterativeSolvers have IDs?
+  private[ml] class Solver(val optAlg: Optimizer) extends IterativeSolver[Model] {
+
+    override def step(): Boolean = optAlg.step()
+
+    override def currentModel(): LogisticRegression.Model = ???
+
+    override def numIterations(): Int = ???
+
+  }
 
 }

@@ -3,7 +3,7 @@ package ml.algorithm
 import org.apache.spark.mllib.linalg.Vector
 
 import ml._
-import ml.estimator.{Classifier, IterativeEstimator}
+import ml.estimator.{IterativeSolver, Classifier, IterativeEstimator}
 import ml.dataset.{Row, Dataset}
 import ml.evaluation.{EvaluationMetric, ZeroOneAccuracy}
 import ml.transformer._
@@ -17,13 +17,7 @@ class AdaBoost(override val id: String) extends Classifier[AdaBoost.Model] with 
     new AdaBoost.Model(Array.empty, Array.empty, this.id)
 
   // From IterativeEstimator
-  override def initWith(dataset: Dataset, paramMap: ParamMap): Unit = ???
-
-  override def step(): Boolean = ???
-
-  override def numIterations(): Int = ???
-
-  override def currentModel(): AdaBoost.Model = ???
+  override private[ml] def createSolver(dataset: Dataset, paramMap: ParamMap): AdaBoost.Solver = ???
 
   // Parameters
   val weakLearner: Param[Classifier] =
@@ -58,5 +52,14 @@ object AdaBoost {
   }
 
   def defaultEvaluator: EvaluationMetric = ZeroOneAccuracy
+
+  private[ml] class Solver extends IterativeSolver[Model] {
+
+    override def step(): Boolean = ???
+
+    override def currentModel(): LogisticRegression.Model = ???
+
+    override def numIterations(): Int = ???
+  }
 
 }

@@ -15,7 +15,7 @@ object BanditModelSelection {
 
     val numModels = 100
     val paramMaps = new Array[ParamMap](numModels)
-    val lrs = new Array[LogisticRegression](numModels)
+    val lr = new LogisticRegression()
 
     val trainingDataset: Dataset = ???
 
@@ -23,17 +23,17 @@ object BanditModelSelection {
 
     val evalMetric: EvaluationMetric[Classifier.Model] = ZeroOneAccuracy
 
-    lrs.zip(paramMaps).foreach { case (lr, paramMap) => lr.initWith(trainingDataset, paramMap) }
+    val lrSolvers = paramMaps.map(lr.createSolver(trainingDataset, _))
 
     for (iter <- Range(0, 1000)) {
       val whichModelToUpdate: Int = {
         // choose a model to update
         // (Actual alg would be smarter, but the point is that the current model may be needed.)
-        lrs.zipWithIndex.map { case (lr, lrIndex) =>
+        lrSolvers.zipWithIndex.map { case (lr, lrIndex) =>
           (evalMetric.compute(valDataset, lr.currentModel()), lrIndex)
         }.maxBy(_._1)._2
       }
-      lrs(whichModelToUpdate).step()
+      lrSolvers(whichModelToUpdate).step()
     }
 
     val bestModel = ???
