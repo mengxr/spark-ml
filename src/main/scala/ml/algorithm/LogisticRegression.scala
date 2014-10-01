@@ -1,34 +1,35 @@
 package ml.algorithm
 
-import org.apache.spark.mllib.linalg.Vector
-import org.apache.spark.mllib.regression.LabeledPoint
-import org.apache.spark.rdd.RDD
-
 import ml._
-import ml.dataset.{DataExtractor, Row, Dataset}
+import ml.dataset._
 import ml.estimator._
 import ml.evaluation.{EvaluationMetric, LogLoss}
 import ml.optimization._
-import ml.transformer.{Transformer, ProbabilisticClassificationModel}
+import ml.transformer.ProbabilisticClassificationModel
+import org.apache.spark.mllib.classification.LogisticRegressionWithLBFGS
+import org.apache.spark.mllib.linalg.Vector
+import org.apache.spark.mllib.regression.LabeledPoint
+import org.apache.spark.rdd.RDD
+import org.apache.spark.sql.{Row, SchemaRDD}
 
 class LogisticRegression(override val id: String) extends Classifier[LogisticRegression.Model] with IterativeEstimator {
 
   def this() = this("LR-" + Identifiable.randomId())
 
   // From Classifier
-  override def fit(dataset: Dataset, paramMap: ParamMap): LogisticRegression.Model = {
-    val rdd: RDD[LabeledPoint] = DataExtractor.extractLabeledPointRDD(dataset)
-    val lrParams: LogisticRegressionParams = ??? // extract from paramMap
-    oldTrainFunction(rdd, lrParams)
+  override def fit(dataset: SchemaRDD, paramMap: ParamMap): LogisticRegression.Model = {
+    // Note: We would actually re-use the IterativeEstimator code.
+    val instances: RDD[LabeledPoint] = DataExtractor.extractLabeledPointRDD(dataset).cache()
+    val lr = new LogisticRegressionWithLBFGS
+    lr.optimizer
+      .setRegParam(paramMap.getOrDefault(regularization))
+      .setNumIterations(paramMap.getOrDefault(maxIter))
+    val model = lr.run(instances)
+    new LogisticRegression.Model(id + ".model", model.weights)
   }
 
-  private class LogisticRegressionParams
-
-  private def oldTrainFunction(data: RDD[LabeledPoint], lrParams: LogisticRegressionParams): LogisticRegression.Model =
-    new LogisticRegression.Model(id)
-
   // From IterativeEstimator
-  override private[ml] def createSolver(dataset: Dataset, paramMap: ParamMap): LogisticRegression.Solver = {
+  override private[ml] def createSolver(dataset: SchemaRDD, paramMap: ParamMap): LogisticRegression.Solver = {
     new LogisticRegression.Solver(paramMap.getOrDefault(optimizer))
     // also init parameter vector, etc.
   }
@@ -42,7 +43,8 @@ class LogisticRegression(override val id: String) extends Classifier[LogisticReg
 
 object LogisticRegression {
 
-  class Model(override val id: String) extends Classifier.Model with ProbabilisticClassificationModel {
+  class Model(override val id: String, val weights: Vector)
+    extends Classifier.Model with ProbabilisticClassificationModel {
 
     def this() = this("LR-model-" + Identifiable.randomId())
 

@@ -1,14 +1,15 @@
 package ml.estimator
 
-import ml.dataset.Dataset
+import org.apache.spark.sql.SchemaRDD
+
 import ml.transformer.Transformer
 import ml.{Identifiable, ParamMap, Params}
 
 abstract class Estimator[Model <: Transformer] extends Identifiable with Params {
 
-  def fit(dataset: Dataset, paramMap: ParamMap): Model
+  def fit(dataset: SchemaRDD, paramMap: ParamMap): Model
 
-  def fit(dataset: Dataset, paramMaps: Array[ParamMap]): Array[Model] = {
+  def fit(dataset: SchemaRDD, paramMaps: Array[ParamMap]): Array[Model] = {
     paramMaps.map(fit(dataset, _))
   }
 

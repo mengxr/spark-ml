@@ -1,6 +1,7 @@
-
-import copy, math
+import copy
+import math
 from datetime import datetime
+
 
 class Pipeline(object):
     def __init__(self):

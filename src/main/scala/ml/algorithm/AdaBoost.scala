@@ -1,23 +1,23 @@
 package ml.algorithm
 
-import org.apache.spark.mllib.linalg.Vector
-
 import ml._
-import ml.estimator.{IterativeSolver, Classifier, IterativeEstimator}
-import ml.dataset.{Row, Dataset}
+import ml.dataset._
+import ml.estimator.{Classifier, IterativeEstimator, IterativeSolver}
 import ml.evaluation.{EvaluationMetric, ZeroOneAccuracy}
 import ml.transformer._
+import org.apache.spark.mllib.linalg.Vector
+import org.apache.spark.sql.SchemaRDD
 
 class AdaBoost(override val id: String) extends Classifier[AdaBoost.Model] with IterativeEstimator[AdaBoost.Model] {
 
   def this() = this("AdaBoost-" + Identifiable.randomId())
 
   // From Classifier
-  override def fit(dataset: Dataset, paramMap: ParamMap): Classifier.Model =
+  override def fit(dataset: SchemaRDD, paramMap: ParamMap): Classifier.Model =
     new AdaBoost.Model(Array.empty, Array.empty, this.id)
 
   // From IterativeEstimator
-  override private[ml] def createSolver(dataset: Dataset, paramMap: ParamMap): AdaBoost.Solver = ???
+  override private[ml] def createSolver(dataset: SchemaRDD, paramMap: ParamMap): AdaBoost.Solver = ???
 
   // Parameters
   val weakLearner: Param[Classifier] =

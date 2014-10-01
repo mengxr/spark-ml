@@ -1,10 +1,11 @@
 package ml.algorithm;
 
-import ml.*;
-import ml.dataset.Dataset;
+import org.apache.spark.sql.SchemaRDD;
+
+import ml.Param;
+import ml.ParamMap;
 import ml.estimator.Estimator;
 import ml.transformer.Transformer;
-import scala.Some;
 
 public class JavaLogisticRegression extends Estimator {
 
@@ -15,7 +16,7 @@ public class JavaLogisticRegression extends Estimator {
   }
 
   @Override
-  public Model fit(Dataset dataset, ParamMap paramMap) {
+  public Model fit(SchemaRDD dataset, ParamMap paramMap) {
     return null;
   }
 
@@ -36,7 +37,7 @@ public class JavaLogisticRegression extends Estimator {
     }
 
     @Override
-    public Dataset transform(Dataset dataset, ParamMap paramMap) {
+    public SchemaRDD transform(SchemaRDD dataset, ParamMap paramMap) {
       return null;
     }
 

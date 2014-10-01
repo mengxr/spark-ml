@@ -1,8 +1,7 @@
 package ml.transformer
 
 import org.apache.spark.mllib.linalg.Vector
-
-import ml.dataset.Row
+import org.apache.spark.sql.Row
 
 trait ProbabilisticClassificationModel {
 

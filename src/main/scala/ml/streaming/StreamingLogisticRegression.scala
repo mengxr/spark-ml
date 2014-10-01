@@ -2,8 +2,8 @@ package ml.streaming
 
 import ml._
 import ml.algorithm.LogisticRegression
-import ml.dataset.Dataset
 import ml.estimator._
+import org.apache.spark.sql.SchemaRDD
 import org.apache.spark.streaming.dstream.DStream
 
 class StreamingLogisticRegression(override val id: String)
@@ -12,7 +12,7 @@ class StreamingLogisticRegression(override val id: String)
   def this() = this("StreamingLR-" + Identifiable.randomId())
 
   // From Classifier
-  override def fit(dataset: Dataset, paramMap: ParamMap): StreamingLogisticRegression.Model = {
+  override def fit(dataset: SchemaRDD, paramMap: ParamMap): StreamingLogisticRegression.Model = {
     new StreamingLogisticRegression.Model(this.id)
   }
 
@@ -33,7 +33,7 @@ object StreamingLogisticRegression {
     def this() = this("StreamingLR-model-" + Identifiable.randomId())
 
     // From Transformer
-    override def transform(dataset: Dataset, paramMap: ParamMap): Dataset = ???
+    override def transform(dataset: SchemaRDD, paramMap: ParamMap): SchemaRDD = ???
 
     // From StreamingTransformer
     override def transformOn(dstream: DStream[RowWithSchema], paramMap: ParamMap): DStream[RowWithSchema] = ???

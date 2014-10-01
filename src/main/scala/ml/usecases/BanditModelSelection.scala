@@ -2,9 +2,9 @@ package ml.usecases
 
 import ml.ParamMap
 import ml.algorithm.LogisticRegression
-import ml.dataset.Dataset
 import ml.estimator.Classifier
-import ml.evaluation.{ZeroOneAccuracy, EvaluationMetric}
+import ml.evaluation.{EvaluationMetric, ZeroOneAccuracy}
+import org.apache.spark.sql.SchemaRDD
 
 /**
  * Example of optimizer for which a private[ml] interface for IterativeEstimator would be useful.
@@ -17,9 +17,9 @@ object BanditModelSelection {
     val paramMaps = new Array[ParamMap](numModels)
     val lr = new LogisticRegression()
 
-    val trainingDataset: Dataset = ???
+    val trainingDataset: SchemaRDD = ???
 
-    val valDataset: Dataset = ???
+    val valDataset: SchemaRDD = ???
 
     val evalMetric: EvaluationMetric[Classifier.Model] = ZeroOneAccuracy
 

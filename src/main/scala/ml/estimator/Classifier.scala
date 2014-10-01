@@ -1,11 +1,11 @@
 package ml.estimator
 
-import ml.dataset.{Row, Dataset}
-import ml.transformer.Transformer
 import org.apache.spark.mllib.linalg.Vector
+import org.apache.spark.sql.{Row, SchemaRDD}
 
 import ml._
 import ml.evaluation._
+import ml.transformer.Transformer
 
 abstract class Classifier[Model <: Transformer] extends Estimator[Model] {
 
@@ -15,7 +15,7 @@ object Classifier {
 
   abstract class Model extends Transformer {
 
-    override def transform(dataset: Dataset, paramMap: ParamMap): Dataset = ??? // default implementation using predict
+    override def transform(dataset: SchemaRDD, paramMap: ParamMap): SchemaRDD = ??? // default implementation using predict
 
     def numClasses: Int
 

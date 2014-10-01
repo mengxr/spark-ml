@@ -1,9 +1,8 @@
 package ml.usecases
 
 import ml._
-import ml.estimator._
-import ml.dataset.Dataset
 import ml.algorithm.{CrossValidation, LogisticRegression}
+import org.apache.spark.sql.SchemaRDD
 
 object LogRegCV {
 
@@ -18,7 +17,7 @@ object LogRegCV {
     paramsBuilder.add(cv.evaluator, LogisticRegression.defaultEvaluator)
     val params: Array[ParamMap] = paramsBuilder.build()
 
-    val dataset: Dataset = ???
+    val dataset: SchemaRDD = ???
 
     val model = cv.fit(dataset, params)
 

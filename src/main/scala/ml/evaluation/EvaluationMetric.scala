@@ -1,10 +1,11 @@
 package ml.evaluation
 
-import ml.dataset.Dataset
+import org.apache.spark.sql.SchemaRDD
+
 import ml.transformer.Transformer
 
 trait EvaluationMetric[T <: Transformer] {
 
-  def compute(dataset: Dataset, model: T): Double
+  def compute(dataset: SchemaRDD, model: T): Double
 
 }

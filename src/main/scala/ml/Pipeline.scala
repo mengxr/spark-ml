@@ -1,32 +1,26 @@
 package ml
 
-import ml.dataset.Dataset
 import ml.estimator.Estimator
 import ml.transformer.Transformer
+import org.apache.spark.sql.SchemaRDD
 
 import scala.collection.mutable.ListBuffer
 
-class Pipeline(override val id: String) extends Estimator {
+trait PipelineStage extends Identifiable
 
-  val components = ListBuffer.empty[Any]
+class Pipeline(override val id: String) extends Estimator {
 
   def this() = this("Pipeline-" + Identifiable.randomId())
 
-  def append(estimator: Estimator): this.type = {
-    components += estimator
-    this
-  }
+  val stages: Param[Array[PipelineStage]] =
+    new Param[Array[PipelineStage]](this, "stages", "stages of the pipeline", None)
 
-  def append(transformer: Transformer): this.type = {
-    components += transformer
-    this
-  }
-
-  override def fit(dataset: Dataset, paramMap: ParamMap): Transformer = {
+  override def fit(dataset: SchemaRDD, paramMap: ParamMap): Transformer = {
+    val theStages = paramMap.getOrDefault(stages)
     // Search for last estimator.
     var lastIndexOfEstimator = -1
-    components.view.zipWithIndex.foreach { case (component, index) =>
-      component match {
+    theStages.view.zipWithIndex.foreach { case (stage, index) =>
+      stage match {
         case _: Estimator =>
           lastIndexOfEstimator = index
         case _ =>
@@ -34,8 +28,8 @@ class Pipeline(override val id: String) extends Estimator {
     }
     var curDataset = dataset
     val transformers = ListBuffer.empty[Transformer]
-    components.view.zipWithIndex.foreach { case (component, index) =>
-      component match {
+    theStages.view.zipWithIndex.foreach { case (stage, index) =>
+      stage match {
         case estimator: Estimator =>
           val transformer = estimator.fit(dataset, paramMap)
           if (index < lastIndexOfEstimator) {
@@ -64,7 +58,7 @@ object Pipeline {
 
     def this(transformers: Array[Transformer]) = this("Pipeline.Model-" + Identifiable.randomId(), transformers)
 
-    override def transform(dataset: Dataset, paramMap: ParamMap): Dataset = {
+    override def transform(dataset: SchemaRDD, paramMap: ParamMap): SchemaRDD = {
       transformers.foldLeft(dataset) { (dataset, transformer) =>
         transformer.transform(dataset, paramMap)
       }
