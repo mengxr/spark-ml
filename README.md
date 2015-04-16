@@ -1,4 +1,1 @@
-spark-ml
-========
-
-proposal for the new interfaces
+#This was merged into Spark 1.2.
