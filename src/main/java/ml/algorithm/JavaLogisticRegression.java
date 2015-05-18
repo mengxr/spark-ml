@@ -1,8 +1,11 @@
-package ml.example;
+package ml.algorithm;
 
-import ml.*;
 import org.apache.spark.sql.SchemaRDD;
-import scala.Some;
+
+import ml.Param;
+import ml.ParamMap;
+import ml.estimator.Estimator;
+import ml.transformer.Transformer;
 
 public class JavaLogisticRegression extends Estimator {
 

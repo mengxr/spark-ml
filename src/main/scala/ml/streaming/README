@@ -1,0 +1,6 @@
+NOTE: The streaming API will not be in Spark 1.2 since it requires more discussion.
+
+Some issues are:
+* The need for a SchemaDStream or a RowWithSchema.
+* Understanding how to handle stateful estimators; this may be modeled after IterativeEstimator.
+* Understanding how to integrate with multi-model training.

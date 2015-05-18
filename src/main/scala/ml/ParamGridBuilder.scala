@@ -1,8 +1,6 @@
-package ml.example
+package ml
 
 import scala.collection.mutable
-
-import ml._
 
 /**
  * Builder for a param grid used in grid search.

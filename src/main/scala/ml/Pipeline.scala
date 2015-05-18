@@ -1,5 +1,9 @@
 package ml
 
+import ml.estimator.Estimator
+import ml.transformer.Transformer
+import org.apache.spark.sql.SchemaRDD
+
 import scala.collection.mutable.ListBuffer
 
 trait PipelineStage extends Identifiable
@@ -11,7 +15,7 @@ class Pipeline(override val id: String) extends Estimator {
   val stages: Param[Array[PipelineStage]] =
     new Param[Array[PipelineStage]](this, "stages", "stages of the pipeline", None)
 
-  override def fit(dataset: Dataset, paramMap: ParamMap): Transformer = {
+  override def fit(dataset: SchemaRDD, paramMap: ParamMap): Transformer = {
     val theStages = paramMap.getOrDefault(stages)
     // Search for last estimator.
     var lastIndexOfEstimator = -1
@@ -54,7 +58,7 @@ object Pipeline {
 
     def this(transformers: Array[Transformer]) = this("Pipeline.Model-" + Identifiable.randomId(), transformers)
 
-    override def transform(dataset: Dataset, paramMap: ParamMap): Dataset = {
+    override def transform(dataset: SchemaRDD, paramMap: ParamMap): SchemaRDD = {
       transformers.foldLeft(dataset) { (dataset, transformer) =>
         transformer.transform(dataset, paramMap)
       }
